@@ -1,12 +1,11 @@
 import React from 'react';
-import Paper from '@material-ui/core/Paper';
+import { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import theme from './ui/Theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '@material-ui/core/IconButton';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -62,7 +61,6 @@ const useStyles = makeStyles((theme) => ({
   },
   paragraphContainer: {
     background: theme.palette.common.white,
-    // background: "red",
     height: '254px',
     padding: '32px 20px 32px 0px'
   },
@@ -71,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     ...theme.typography.mainParagraph,
     margin: 0
   },
-  paragraphContainer2: {
+  testbg: {
     background: "red"
   },
   paginatorRectangleWrapper: {
@@ -115,6 +113,23 @@ const useStyles = makeStyles((theme) => ({
 
 function Home() {
   const classes = useStyles();
+  const [sliderData, setSliderData] = useState({});
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedSlide, setSelectedSlide] = useState(1);
+
+  async function getSliderData() {
+    try {
+      const response = await axios.get('https://raw.githubusercontent.com/Bernabe-Felix/Bellotero/master/page1.json');
+      setSliderData(response.data.slider);
+    } catch (error) {
+      console.log('ERROR');
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    getSliderData();
+  }, [])
 
   return (
     <div className={classes.bodyWrapper}>
@@ -122,27 +137,41 @@ function Home() {
         <Grid container spacing={0}>
           <Grid item xs={4} className={classes.titleRectangleWrapper}>
             <div className={classes.titleRectangle}>
-              <h1 className={classes.titleText}>Our customers love us</h1>
+              <h1 className={classes.titleText}>{sliderData.title}</h1>
             </div>
           </Grid>
           <Grid item xs={8}></Grid>
           <Grid item xs={4} className={classes.personBasicInfoContainer}>
-            <h2 className={classes.personFullName}>Pete Zahut</h2>
-            <p className={classes.personJob}>Chef @ Maniak</p>
+            <h2 className={classes.personFullName}>
+              {sliderData.reviews[selectedIndex].name}
+            </h2>
+            <p className={classes.personJob}>
+              {sliderData.reviews[selectedIndex].position}
+            </p>
           </Grid>
           <Grid item xs={6} className={classes.paragraphContainer}>
             <div>
               <p className={classes.para}>
-                “It's funny what memory does, isn't it? My favorite holiday tradition might not have happened more than once or twice. But because it is such a good memory, so encapsulating of everything I love about the holidays, in my mind it happened every year. Without fail"
+                {sliderData.reviews[selectedIndex].comment}
               </p>
               <div className={classes.paginatorRectangleWrapper}>
                 <div className={classes.paginatorRectangleContainer}>
                   <div className={classes.pages}>
-                    1 / 4
+                    {selectedSlide} / {sliderData.reviews.length}
                   </div>
                   <div className={classes.controls}>
-                    <FontAwesomeIcon icon={faArrowLeft} className={classes.arrow} />
-                    <FontAwesomeIcon icon={faArrowRight} className={classes.arrow} />
+                    <IconButton aria-label="previousElement" onClick={() => {
+                      setSelectedIndex(0);
+                      setSelectedSlide(1);
+                    }}>
+                      <FontAwesomeIcon icon={faArrowLeft} className={classes.arrow} />
+                    </IconButton>
+                    <IconButton aria-label="nextElement" onClick={() => {
+                      setSelectedIndex(1);
+                      setSelectedSlide(2);
+                    }}>
+                      <FontAwesomeIcon icon={faArrowRight} className={classes.arrow} />
+                    </IconButton>
                   </div>
                 </div>
               </div>
