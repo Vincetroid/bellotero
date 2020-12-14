@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -114,22 +114,29 @@ const useStyles = makeStyles((theme) => ({
 function Home() {
   const classes = useStyles();
   const [sliderData, setSliderData] = useState({});
+  const [reviews, setReviews] = useState('No reviews');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedSlide, setSelectedSlide] = useState(1);
 
-  async function getSliderData() {
+  useEffect(async () => {
+    await getSliderData();
+  }, []);
+
+  const getSliderData = async () => {
     try {
       const response = await axios.get('https://raw.githubusercontent.com/Bernabe-Felix/Bellotero/master/page1.json');
       setSliderData(response.data.slider);
+      setReviews(response.data.slider.reviews);
     } catch (error) {
       console.log('ERROR');
       console.error(error);
     }
-  }
 
-  useEffect(() => {
-    getSliderData();
-  }, [])
+    // const data = await fetch('https://raw.githubusercontent.com/Bernabe-Felix/Bellotero/master/page1.json')
+    // const dataJson = await data.json();
+    // setSliderData(dataJson.slider);
+    // setReviews(dataJson.slider.reviews);
+  }
 
   return (
     <div className={classes.bodyWrapper}>
@@ -143,21 +150,21 @@ function Home() {
           <Grid item xs={8}></Grid>
           <Grid item xs={4} className={classes.personBasicInfoContainer}>
             <h2 className={classes.personFullName}>
-              {sliderData.reviews[selectedIndex].name}
+              {reviews[selectedIndex].name}
             </h2>
             <p className={classes.personJob}>
-              {sliderData.reviews[selectedIndex].position}
+              {reviews[selectedIndex].position}
             </p>
           </Grid>
           <Grid item xs={6} className={classes.paragraphContainer}>
             <div>
               <p className={classes.para}>
-                {sliderData.reviews[selectedIndex].comment}
+                {reviews[selectedIndex].comment}
               </p>
               <div className={classes.paginatorRectangleWrapper}>
                 <div className={classes.paginatorRectangleContainer}>
                   <div className={classes.pages}>
-                    {selectedSlide} / {sliderData.reviews.length}
+                    {selectedSlide} / {reviews.length}
                   </div>
                   <div className={classes.controls}>
                     <IconButton aria-label="previousElement" onClick={() => {
