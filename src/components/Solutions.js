@@ -91,7 +91,7 @@ const useStyles = makeStyles((theme) => ({
     gridGap: '1rem',
     gridTemplateRows: '126px 126px 140px',
     height: '390px',
-    flex: 0.6,
+    flex: 0.68,
   },
   slider: {
     position: 'relative',
@@ -201,7 +201,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.cobaltBlue,
   },
   resultBigNumbers: {
-    background: "green",
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -209,7 +208,6 @@ const useStyles = makeStyles((theme) => ({
   },
   estimatedCostFoodSavingsWrapper: {
     position: 'relative',
-    background: "aqua",
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -218,7 +216,6 @@ const useStyles = makeStyles((theme) => ({
   },
   estimatedCostFoodSavingsWrapperAlign: {
     position: 'relative',
-    background: "aqua",
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -227,7 +224,6 @@ const useStyles = makeStyles((theme) => ({
   },
   yourEstimatedAnnualSavingsWrapper: {
     position: 'relative',
-    background: "aqua",
     display: 'flex',
     flex: 1,
     flexDirection: 'column',
@@ -254,8 +250,11 @@ function Home() {
     title: '',
     description: ''
   });
-  const [valueMIS, setValueMIS] = useState(30);
-  const [valuePI, setValuePI] = useState(7);
+  
+  const [estimatedFoodCostSavings, setEstimatedFoodCostSavings] = useState(0);
+  const [estimatedAnnualSavings, setEstimatedAnnualSavings] = useState(0);
+  const [valueMIS, setValueMIS] = useState(0);
+  const [valuePI, setValuePI] = useState(0);
 
   useEffect(async () => {
     await getCalculatorData();
@@ -265,8 +264,6 @@ function Home() {
     try {
       const response = await axios.get('https://raw.githubusercontent.com/Bernabe-Felix/Bellotero/master/page2.json');
       setCalculatorData(response.data.calculator);
-      console.log('response.data.calculator');
-      console.log(response.data.calculator);
     } catch (error) {
       console.log('ERROR');
       console.error(error);
@@ -275,10 +272,20 @@ function Home() {
 
   const handleChangeMIS = (event, newValue) => {
     setValueMIS(newValue);
+    const result = Number(valueMIS * 0.3);
+    setEstimatedFoodCostSavings(result);
+    
+    const result2 = Number(valuePI * 1337 + estimatedFoodCostSavings);
+    setEstimatedAnnualSavings(result2);
   };
 
   const handleInputChangeMIS = (event) => {
     setValueMIS(event.target.value === '' ? '' : Number(event.target.value));
+    const result = Number(event.target.value * 0.3);
+    setEstimatedFoodCostSavings(result);
+
+    const result2 = Number(event.target.value * 1337 + estimatedFoodCostSavings);
+    setEstimatedAnnualSavings(result2);
   };
 
   const handleBlurMIS = () => {
@@ -293,10 +300,15 @@ function Home() {
 
   const handleChangePI = (event, newValue) => {
     setValuePI(newValue);
+    console.log(estimatedFoodCostSavings)
+    const result = Number(valuePI * 1337 + estimatedFoodCostSavings);
+    setEstimatedAnnualSavings(result);
   };
 
   const handleInputChangePI = (event) => {
     setValuePI(event.target.value === '' ? '' : Number(event.target.value));
+    const result = Number(event.target.value * 1337 + estimatedFoodCostSavings);
+    setEstimatedAnnualSavings(result);
   };
 
   const handleBlurPI = () => {
@@ -325,7 +337,6 @@ function Home() {
           <Grid item xs={8}>
             <div className={classes.calculatorContainer}>
               <div className={classes.gridCalculator}>
-                {/* <div className={classes.sliderMIS}> */}
                 <div className={classes.slider}>
                   <div className={classes.sliderLabel}>
                     <p className={classes.label}>
@@ -396,7 +407,7 @@ function Home() {
                     <div className={classes.estimatedCostFoodSavingsWrapperAlign}>
                       <div className={classes.quantity}>
                         <span className={classes.dollarSignBold}>$</span>
-                        <span className={classes.estimatedCostFoodSavings}>8.611</span>
+                        <span className={classes.estimatedCostFoodSavings}>{estimatedFoodCostSavings.toFixed(3)}</span>
                       </div>
                         <span className={classes.label}>Estimated cost food savings</span>
                    </div>
@@ -404,7 +415,7 @@ function Home() {
                   <div className={classes.yourEstimatedAnnualSavingsWrapper}>
                     <div className={classes.quantity}>
                       <span className={classes.dollarSignBold}>$</span>
-                      <span className={classes.estimatedCostFoodSavings}>36.211</span>
+                      <span className={classes.estimatedCostFoodSavings}>{estimatedAnnualSavings.toFixed(3)}</span>
                     </div>
                       <span className={classes.label}>Your estimated annual savings</span>
                   </div>
