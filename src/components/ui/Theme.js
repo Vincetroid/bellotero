@@ -52,12 +52,26 @@ export default createMuiTheme({
       lineHeight: '1.33',
       letterSpacing: 'normal',
     },
+    secondaryParagraph: {
+      fontFamily: 'Roboto, sans-serif',
+      fontSize: '16px',
+      fontWeight: 500,
+      fontStretch: 'normal',
+      lineHeight: '24px',
+      letterSpacing: 'normal',
+    },
     paginator: {
       fontFamily: 'Cormorant Garamond',
       fontSize: '32px',
       fontStyle: 'italic',
       lineHeight: '1',
       letterSpacing: '-2px',
+    },
+    label: {
+      fontFamily: 'Roboto, sans-serif',
+      fontSize: '14px',
+      fontWeight: 900,
+      margin: 0,
     }
   },
   widthContainer: {
